@@ -1,0 +1,87 @@
+#!/bin/sh
+
+echo '=== Setting Up Environment ==='
+function InstallMigit {
+git configure-path
+cat > .git/hooks/pre-push <<'EOF'
+#!/bin/sh
+path=$(git rev-parse --show-toplevel)/SQL
+if [ $(cat $path/* | wc -l) -gt 0 ]; then
+echo 'the files in - $path - has content'
+echo 'use (git reset --soft 'HEAD^') to undo the commit'
+echo 'If you would like to keep the contents of scripts'
+echo 'Please commit with @MIG, otherwise empty those files'
+exit 1;
+fi
+EOF
+cat > .git/hooks/post-commit <<'EOF'
+#!/bin/sh
+if [ -e .MIGRATION ]; then
+rm .MIGRATION
+path=$(git rev-parse --show-toplevel)/SQL
+find $path -type f -exec sh -c '>{}' \;
+git add $(find $path -type f)
+git commit -m 'MIGRATION - Emptied files'
+fi
+EOF
+cat > .git/hooks/commit-msg <<'EOF'
+#!/bin/sh
+mig=$(cat $1 | grep '^@MIG' | wc -l)
+if [ $mig -gt 0 ]; then
+touch .MIGRATION
+message=$(cat $1 | grep '^@MIG')
+echo $message > .MIGRATION
+fi
+EOF
+chmod a+x .git/hooks/*
+if [ ! -d .git/hooks ];then
+       mkdir .git/.migit
+    fi
+
+}
+if [ $# -eq 0 ];then
+if git rev-parse --git-dir > /dev/null 2>&1;then
+  datapath="$(git rev-parse --git-dir)"
+  dir="$(basename $datapath)"
+   if [ -d $datapath/.migit ];then
+     while true;do
+       toppath="$(git rev-parse --show-toplevel)/.git/path"
+       setpath="$(cat $toppath)"
+       dir="$(basename $setpath)"
+       read -p "Migit Already Setup to Directory $dir  Do you want to Re Install [y/n]" REINSTALL
+         if [ "$REINSTALL" = "y" ];then
+          if [ -d .git/hooks ];then
+          InstallMigit
+      else
+        mkdir .git/hooks
+        InstallMigit
+    fi
+           break;
+         elif [ "$REINSTALL" = "n" ];then
+           echo "Already Installed use configure-path to change migration directory"
+           break;
+         fi
+      done
+   else 
+    if [ -d .git/hooks ];then
+          InstallMigit
+      else
+        mkdir .git/hooks
+        InstallMigit
+    fi
+   fi            
+else
+   while true;do
+       read -p "Not a git repo , do you want to Install Git [y/n]" GITINSTALL
+         if [ "$GITINSTALL" = "y" ];then
+           echo " Install Git"
+           break;
+         elif [ "$GITINSTALL" = "n" ];then
+           echo "U need git for this to work"
+           break;
+         fi
+      done
+fi
+else
+  echo "git migit Takes No Arguments";
+fi
