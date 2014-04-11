@@ -1,5 +1,4 @@
 create table book
 ( name varchar(10),
   id numeric(5) primary key,
-  type varchar(20)
-);
+  type varchar(20));
