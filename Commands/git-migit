@@ -31,14 +31,14 @@ help) echo "OPTIONS
  ----- log [hash]..[hash]  Show migration commits from hash..to..hash
  ----- log [date]..[date]  Show migration commits from hash..to..hash"
          ;;
-show)  echo "MIGIT SHOW"
+show)  
        migdir=$(basename $(cat $(git rev-parse --show-toplevel)/.git/path)) 
          if [ $# -eq 2 ];then
          
             git log --pretty=oneline | grep "@MIG" | awk '{print $1}'> TEMP_SHOW_LIST
             if [ $(cat TEMP_SHOW_LIST | wc -l) -gt 0 ];then
             for line in `cat TEMP_SHOW_LIST`;do 
-                echo "$2  Content In  $line ";
+                echo "-- $2  Content In  $line ";
                 git show $line:$2
             done
             rm TEMP_SHOW_LIST
@@ -50,7 +50,7 @@ show)  echo "MIGIT SHOW"
           
 
            if [ $(git log --pretty=oneline | grep "@MIG" | grep "^$3" |wc -l) -gt 0 ];then
-                     echo "======== $2 FILE CONTENT ========="
+                     echo "-- ======== $2 FILE CONTENT ========="
                      git show $3:$2
                   else
                      echo "$3 Is not a valid Migration HASH "
@@ -59,12 +59,12 @@ show)  echo "MIGIT SHOW"
          elif [ $# -eq 4 ];then
            
           case "$3" in
-           -before) echo "migit -before"
+           -before) 
                  if [ $(git log --pretty=oneline | grep "@MIG" | grep "^$4" |wc -l) -gt 0 ];then
                       git log --pretty=oneline | grep "@MIG" | awk '{print $1}'> TEMP_SHOW_LIST
                       sed -n '/^'$4'/,$p' TEMP_SHOW_LIST >AFTER_LIST
                       for line in `cat AFTER_LIST`;do 
-                echo $'\n'$2  Content In  $line $'\n'
+                echo $'\n'-- $2  Content In  $line $'\n'
                 git show $line:$2
                 echo $'\n'
             done
@@ -75,14 +75,14 @@ show)  echo "MIGIT SHOW"
                      exit 1;
                   fi        
                   ;;
-           -after) echo "migit -after"
+           -after) 
                  if [ $(git log --pretty=oneline | grep "@MIG" | grep "^$4" |wc -l) -gt 0 ];then
                       git log --pretty=oneline | grep "@MIG" | awk '{print $1}'> TEMP_SHOW_LIST
                       sed -n '/^'$4'/q;p' TEMP_SHOW_LIST >BEFORE_LIST
                       for line in `cat BEFORE_LIST`;do 
-                echo $'\n'$2  Content In  $line $'\n'
+                echo $'\n'-- $2  Content In  $line $'\n'
                 git show $line:$2
-                echo $'\n'n
+                echo $'\n'
             done
             rm TEMP_SHOW_LIST
             rm BEFORE_LIST
@@ -96,7 +96,7 @@ show)  echo "MIGIT SHOW"
                   if [ $(git log --pretty=oneline | grep "@MIG" | grep "^$4" |wc -l) -gt 0 ];then
                       git log $3 $4 --pretty=oneline | grep "@MIG" | awk '{print $1}' >BETWEEN_LIST
                       for line in `cat BETWEEN_LIST`;do 
-                           echo $'\n' $2  Content In  $line $'\n\n'$(git show $line:$2)$'\n'
+                           echo $'\n' -- $2  Content In  $line $'\n\n'$(git show $line:$2)$'\n'
                       done
                       rm BETWEEN_LIST
                   else
@@ -117,7 +117,7 @@ show)  echo "MIGIT SHOW"
          fi
              
     ;;
-log)  echo  "MIGIT LIST"
+log)  
       if [ $# -eq 1 ];then
         if [ "$1" = "log" ];then
           git log --pretty=format:"%h - %an, %ar : %s" | grep "@MIG"
@@ -129,14 +129,14 @@ log)  echo  "MIGIT LIST"
       git log "${*:2}" --pretty=format:"%h - %an, %ar : %s" | grep " @MIG"
       fi
     ;;
-status) echo "MIGIT status"
+status) 
        datapath="$(git rev-parse --show-toplevel)/.git/path"
        datacontent="$(cat $datapath)"
        dir="$(basename $datacontent)"
        echo 'The Migration directory is :'$dir
        find $datacontent -type f -print > $(git rev-parse --git-dir)/TEMP_STATUS
        for line in `cat $(git rev-parse --git-dir)/TEMP_STATUS`;do
-       echo $'\n'======   $line  ======= $'\n\n'$(cat $line)$'\n'
+       echo $'\n'--======   $line  ======= $'\n\n'$(cat $line)$'\n'
        done 
        rm $(git rev-parse --git-dir)/TEMP_STATUS  
        ;;    

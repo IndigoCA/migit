@@ -34,7 +34,7 @@ echo $message > .MIGRATION
 fi
 EOF
 chmod a+x .git/hooks/*
-if [ ! -d .git/hooks ];then
+if [ -d .git/hooks ];then
        mkdir .git/.migit
     fi
 
