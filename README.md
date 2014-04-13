@@ -29,42 +29,49 @@ GIT MIGIT
 ----------
 This command takes several options, keep reading!
 
+
 GIT MIGIT HELP
---------------
+
 Provides a list of options and arguments that GIT MIGIT supports with a brief description
 
+
 GIT MIGIT SHOW [FILE]
-----------------------
+
 Shows all the migration commits and the contents of the file for each of these commits.
 
 `git migit show example.sql s3g8d`
 
+
 GIT MIGIT SHOW [FILE] [HASH]
-----------------------------
+
 Shows the contents of the file for the commit hash.
 
 `git migit show example.sql s3g8d`
 
+
 GIT MIGIT SHOW [FILE] [HASH-from] [HASH-to]
--------------------------------------------
+
 Shows all the migration commits and contents of the file between the two given commit hashes.
 
 `git migit show example.sql s3g8d 487fe`
 
+
 GIT MIGIT SHOW [FILE] [BEFORE/-AFTER] [HASH]
----------------------------------------------
+
 Shows all the contents of a file before or after a given commit hash
 
 `git migit show example.sql before 487fe`
 
 `git migit show example.sql after 487fe`
 
+
 GIT MIGIT STATUS
------------------
+
 Shows the Migration folder Path and its contents
 
+
 GIT MIGIT LOG
----------------
+
 Shows all migration commits.
 
 This commands supports all the arguments that git log supports.
