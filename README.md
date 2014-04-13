@@ -2,6 +2,10 @@ MIGIT
 ======
 Database Migration/Management Tool built on Git
 
+Migration
+----------
+In order for our a migration to occur, you must use the keyword "@MIG" at the beginning of the commit message, this will let the tool know that you would like to perform a migration.  Once the commit is done, the tool will automatically remove all the contents of the files within the Migration Directory.  Don't worry, all the data is saved.  To retrieve the data, use the `git migit show [options...]` (read below).
+
 Commands
 =========
 
