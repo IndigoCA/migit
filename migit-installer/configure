@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo "Begin Install"
+
+cp git-migit /usr/local/bin
+chmod a+x /usr/local/bin/git-migit
+cp git-configure-path /usr/local/bin
+chmod a+x /usr/local/bin/git-configure-path
+cp git-migit-init /usr/local/bin
+chmod a+x /usr/local/bin/git-migit-init
+
+ls /usr/local/bin | grep '^git'
+
+echo "Finished Installing"

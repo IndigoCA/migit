@@ -1,0 +1,63 @@
+#!/bin/sh
+if ! git rev-parse --git-dir > /dev/null 2>&1;then
+echo "Not a Git Repo , make it a git repo to use this command"
+exit 1;
+fi
+root=$(git rev-parse --show-toplevel)
+#1-> add help content
+#2-> run - prompt user to either create a folder or choose an existing one
+#3-> if existing loop [ check if its a directory and look for sql files ] if no files
+#    prompt to create files [ yes create ask user for names - not create later] ??no clarity
+#4->if dosen't create a directory prompt for name and file names
+#5-> save the path of the directory to .git/path ...
+
+
+if [ $# -eq 1 ]; then
+ case "$1" in
+      help) echo "OPTIONS help";;
+         *) echo "Invalid Option use 'migit help' ";;
+ esac
+elif [ $# -eq 0 ];then
+	while true;do
+	read -p "Do you have a Migration Directory - [y/n]" RESP
+	if [ "$RESP" = "y" ];then
+		while true;do
+	     read -p "Enter the  Migration Directory Name :" DIRNAME
+	     migpath="$(git rev-parse --show-toplevel)/$DIRNAME"
+	       if [ -d $migpath ]; then
+		      echo "Migration Directory is set to - $migpath"
+		      echo $migpath > "$root/.git/path"
+		      echo "$(cat $root/.git/path) - .git/path"
+		      break; 
+	       else 
+		      echo "$DIRNAME is not a valid Directory , Please Provide one"
+		      break;
+	       fi
+	     done
+	     break;  
+	elif [ "$RESP" = "n" ];then
+		 while true;do
+	     read -p "Do you want to create a Migration Directory [y/n]" CREDIR
+	      if [ "$CREDIR" = "y" ];then
+	      	 read -p "Enter the  Migration Directory Name To create :" DIRNAMECRE
+	      	 mkdir $DIRNAMECRE
+	      	 newpath="$root/$DIRNAMECRE"
+	      	 echo $newpath > "$root/.git/path"
+	      	 echo "$DIRNAMECRE Created"
+	      	 break;
+	      elif [ "$CREDIR" = "n" ];then
+	         echo "You Can Create One later"
+	         break;
+	      fi
+	      done
+	      break;
+	fi
+	done        	  
+
+else
+	echo "Use 'git configure-path help'"
+	exit 1;
+fi
+
+
+
