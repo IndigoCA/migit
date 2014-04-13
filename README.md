@@ -49,6 +49,7 @@ Shows all migration commits.
 This commands supports all the arguments that git log supports.
 
 `git migit log --before=today`
+`git migit log --since=two.weeks.ago --until=yesterday`
 
 See here for the options https://www.kernel.org/pub/software/scm/git/docs/git-log.html
 
